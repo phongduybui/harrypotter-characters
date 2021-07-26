@@ -5,7 +5,6 @@ import styles from './styles';
 const DetailScreen = ({ route }) => {
   const character = route.params.item;
   const { name, dateOfBirth, actor, ancestry, house, image } = character;
-  console.log(character);
   return (
     <ScrollView style={styles.container}>
       <View style={styles.test}>

@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView, TextInput } from 'react-native';
 import styles from './styles';
 
 const SearchBox = ({ onSearchTermChange }) => {
   const [term, setTerm] = useState('');
-  useEffect(() => {}, []);
 
   const onChangeTerm = (text) => {
     setTerm(text);
