@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  TouchableHighlight,
-  ScrollView,
-  ActivityIndicator,
-  Text,
-} from 'react-native';
+import { View, ScrollView, ActivityIndicator, Text } from 'react-native';
 import styles from './styles';
-import SvgUri from 'react-native-svg-uri';
 import CharacterList from '../../components/CharacterList';
+import SearchBox from '../../components/SearchBox';
 import harrypotterApi from '../../api/harrypotterApi';
+import _ from 'lodash';
 
 const HomeScreen = () => {
   const [allCharacters, setAllCharacters] = useState([]);
@@ -19,6 +14,7 @@ const HomeScreen = () => {
   const [slytherin, setSlytherin] = useState([]);
   const [ravenclaw, setRavenclaw] = useState([]);
   const [hufflepuff, setHufflepuff] = useState([]);
+  const [searchResult, setSearchResult] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -54,20 +50,29 @@ const HomeScreen = () => {
     }
   };
 
+  const onSearchTermChange = _.debounce((text) => {
+    if (text) {
+      const characterResult = allCharacters.filter((c) =>
+        c?.name?.toLowerCase().includes(text.toLowerCase())
+      );
+      if (!characterResult.length) {
+        setError('No matching results!');
+      } else {
+        setError(null);
+      }
+      setSearchResult(characterResult);
+    } else {
+      setSearchResult([]);
+    }
+  }, 200);
+
   useEffect(() => {
     fetchAllCharacter();
   }, []);
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.menuContainer}>
-        <TouchableHighlight>
-          <SvgUri source={require('../../assets/icons/menu.svg')} />
-        </TouchableHighlight>
-        <TouchableHighlight>
-          <SvgUri source={require('../../assets/icons/search.svg')} />
-        </TouchableHighlight>
-      </View>
+      <SearchBox onSearchTermChange={onSearchTermChange} />
 
       <View style={styles.contentWrapper}>
         {loading ? (
@@ -80,13 +85,51 @@ const HomeScreen = () => {
           <Text style={{ color: 'red' }}>{error}</Text>
         ) : (
           <>
-            <CharacterList title='All Characters' data={allCharacters} />
-            <CharacterList title='Hogwarts Staff' data={students} />
-            <CharacterList title='Hogwarts Staff' data={staffs} />
-            <CharacterList title='Gryffindor House' data={gryffindor} />
-            <CharacterList title='Slytherin House' data={slytherin} />
-            <CharacterList title='Ravenclaw House' data={ravenclaw} />
-            <CharacterList title='Hufflepuff House' data={hufflepuff} />
+            {searchResult.length > 0 ? (
+              <CharacterList
+                heading='heading1'
+                title='Result'
+                data={searchResult}
+              />
+            ) : (
+              <>
+                <CharacterList
+                  heading='heading1'
+                  title='All Characters'
+                  data={allCharacters}
+                />
+                <CharacterList
+                  heading='heading2'
+                  title='Hogwarts Staff'
+                  data={students}
+                />
+                <CharacterList
+                  heading='heading2'
+                  title='Hogwarts Staff'
+                  data={staffs}
+                />
+                <CharacterList
+                  heading='heading2'
+                  title='Gryffindor House'
+                  data={gryffindor}
+                />
+                <CharacterList
+                  heading='heading2'
+                  title='Slytherin House'
+                  data={slytherin}
+                />
+                <CharacterList
+                  heading='heading2'
+                  title='Ravenclaw House'
+                  data={ravenclaw}
+                />
+                <CharacterList
+                  heading='heading2'
+                  title='Hufflepuff House'
+                  data={hufflepuff}
+                />
+              </>
+            )}
           </>
         )}
       </View>

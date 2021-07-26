@@ -3,22 +3,17 @@ import { View, Text, ScrollView, FlatList } from 'react-native';
 import CharacterCard from '../CharacterCard';
 import styles from './styles';
 
-const ListCharacter = ({ title, data = [], style }) => {
+const ListCharacter = ({ title, data, heading, style }) => {
   return (
-    <View style={[style, { paddingTop: 52 }]}>
-      <Text style={[styles.heading, styles.heading1]}>{title}</Text>
+    <View style={[{ paddingTop: 52 }, style]}>
+      <Text style={[styles.heading, styles[heading]]}>{title}</Text>
       <ScrollView>
         <FlatList
           horizontal
           showsHorizontalScrollIndicator={false}
           data={data}
           renderItem={({ item, index }) => (
-            <CharacterCard
-              isLast={index === data.length - 1}
-              name={item.name}
-              house={item.house}
-              uri={item.image}
-            />
+            <CharacterCard isLast={index === data.length - 1} {...item} />
           )}
           keyExtractor={(item) => item.name}
         />
